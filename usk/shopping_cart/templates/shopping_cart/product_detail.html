@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>{{ product.name }}</h2>
+  <p>{{ product.description }}</p>
+  <p>Price: ${{ product.price }}</p>
+  {% comment %} <img src="{{ product.image.url }}" alt="{{ product.name }}" if product.image else "" > {% endcomment %}
+
+  <!-- Add shopping cart management buttons (e.g., add to cart) -->
+  <form action="{% url 'shopping_cart:add_to_cart' pk=product.pk %}" method="post">
+    {% csrf_token %}
+    <input type="text" name="price" value="{{ product.price }}">
+    <button type="submit" class="btn btn-primary">Add to Cart</button>
+  </form>
+
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2 class="mb-4">Products</h2>
+  <div class="row">
+    {% for product in products %}
+      <div class="col-md-4 col-sm-6 mb-4">
+        <div class="card">
+          {% comment %} <!-- You can add an image to the card if your product model has an image field -->
+          <!-- <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}"> --> {% endcomment %}
+          <div class="card-body">
+            <h5 class="card-title">
+              <a href="{% url 'shopping_cart:product_detail' pk=product.pk %}">{{ product.name }}</a>
+            </h5>
+            <p class="card-text">${{ product.price }}</p>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}
