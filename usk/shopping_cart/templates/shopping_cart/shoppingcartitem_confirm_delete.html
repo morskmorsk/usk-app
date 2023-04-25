@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Remove Item</h2>
+    <p>Are you sure you want to remove this item from your shopping cart?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Yes, remove item</button>
+        <a href="{% url 'shopping_cart:shopping_cart' %}">Cancel</a>
+    </form>
+{% endblock %}

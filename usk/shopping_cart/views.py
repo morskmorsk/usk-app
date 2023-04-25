@@ -1,9 +1,15 @@
 from django.shortcuts import get_object_or_404, redirect
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, TemplateView, DeleteView
-from .models import Product, ShoppingCart, ShoppingCartItem
+from django.views.generic import (
+    ListView, DetailView, CreateView, TemplateView, DeleteView)
+from .models import (
+    Product, ShoppingCart, ShoppingCartItem, Order, OrderItem)
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from .forms import ProductForm
+from django.shortcuts import render
+from django.http import Http404
+from .forms import UpdateCartItemForm
+from django.views.generic.edit import UpdateView
 
 
 class ProductListView(ListView):
@@ -36,9 +42,18 @@ class ShoppingCartView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         cart = get_object_or_404(ShoppingCart, user=self.request.user)
         items = ShoppingCartItem.objects.filter(cart=cart)
+
+        # Calculate the subtotal
+        subtotal = sum([item.price * item.quantity for item in items])
+
+        # Calculate the sales tax
         sales_tax = cart.get_sales_tax()
-        total_price = sum([item.price * item.quantity for item in items]) + sales_tax
-        context.update({'items': items, 'sales_tax': sales_tax, 'total_price': total_price})
+
+        # Calculate the total
+        total = subtotal + sales_tax
+
+        context.update({'items': items, 'subtotal': subtotal,
+                        'sales_tax': sales_tax, 'total': total})
         return context
 
 
@@ -60,26 +75,73 @@ class AddToCartView(LoginRequiredMixin, TemplateView):
 
 class RemoveFromCartView(LoginRequiredMixin, DeleteView):
     model = ShoppingCartItem
-    success_url = reverse_lazy('shopping_cart')
+    success_url = reverse_lazy('shopping_cart:shopping_cart')
 
     def get_object(self, queryset=None):
-        product = get_object_or_404(Product, pk=self.kwargs['pk'])
+        # product = Product.objects.filter(pk=self.kwargs['pk']).first()
+
+        # if not product:
+        #     return None
+
         cart = get_object_or_404(ShoppingCart, user=self.request.user)
-        return get_object_or_404(ShoppingCartItem, cart=cart, product=product)
+        cart_item = ShoppingCartItem.objects.filter(
+            cart=cart, pk=self.kwargs['pk']).first()
+
+        if not cart_item:
+            raise Http404("Shopping cart item not found")
+
+        return cart_item
+
+    def render_to_response(self, context, **response_kwargs):
+        if not context.get('object'):
+            return render(self.request, 'shopping_cart/product_not_found.html',
+                          status=404)
+
+        return super().render_to_response(context, **response_kwargs)
 
 
-class UpdateCartItemView(LoginRequiredMixin, TemplateView):
+class UpdateCartItemView(LoginRequiredMixin, UpdateView):
+    model = ShoppingCartItem
+    form_class = UpdateCartItemForm
+    template_name = 'shopping_cart/update_cart_item.html'
+    success_url = reverse_lazy('shopping_cart:shopping_cart')
+
+    def get_queryset(self):
+        return ShoppingCartItem.objects.filter(cart__user=self.request.user)
+
+
+class CheckoutView(TemplateView):
+    template_name = 'shopping_cart/checkout.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Add any context data needed for the checkout process here
+        return context
 
     def post(self, request, *args, **kwargs):
-        quantity = int(request.POST.get('quantity', 1))
-        product = get_object_or_404(Product, pk=self.kwargs['pk'])
         cart = get_object_or_404(ShoppingCart, user=request.user)
-        item = get_object_or_404(ShoppingCartItem, cart=cart, product=product)
+        cart_items = ShoppingCartItem.objects.filter(cart=cart)
 
-        if quantity > 0:
-            item.quantity = quantity
-            item.save()
-        else:
-            item.delete()
+        # Create Order
+        order = Order(user=request.user)
+        order.save()
 
-        return redirect('shopping_cart')
+        # Create OrderItems
+        for item in cart_items:
+            order_item = OrderItem(
+                order=order,
+                product=item.product,
+                quantity=item.quantity,
+                price=item.price
+            )
+            order_item.save()
+
+        # Clear the cart
+        cart_items.delete()
+
+        # Redirect to a success page or any other appropriate page
+        return redirect('shopping_cart:checkout_success')
+
+
+class CheckoutSuccessView(TemplateView):
+    template_name = 'shopping_cart/checkout_success.html'

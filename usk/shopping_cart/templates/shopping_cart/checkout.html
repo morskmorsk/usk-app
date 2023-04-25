@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Checkout</h2>
+    <!-- Add the checkout form and other elements here -->
+    <form method="post">
+        {% csrf_token %}
+        <!-- Add any other form elements needed for the checkout process -->
+        <button type="submit" class="btn btn-primary">Checkout</button>
+    </form>
+{% endblock %}
+

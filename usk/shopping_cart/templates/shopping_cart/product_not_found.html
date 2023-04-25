@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Product Not Found</h2>
+  <p>The product you are trying to remove from the cart does not exist.</p>
+  <a href="{% url 'shopping_cart:shopping_cart' %}" class="btn btn-primary">Back to Shopping Cart</a>
+{% endblock %}

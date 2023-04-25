@@ -18,19 +18,20 @@
           <td>{{ item.product.name }}</td>
           <td>{{ item.quantity }}</td>
           <td>${{ item.price }}</td>
-          <td>${{ item.price|multiply:item.quantity|add:sales_tax }}</td>
+          <td>${{ item.price|multiply:item.quantity }}</td>
           <td>
             <!-- Add update button -->
-            <a href="{% url 'shopping_cart:update_cart_item' pk=item.pk %}" class="btn btn-primary btn-sm">Update</a>
+            <a href="{% url 'shopping_cart:update_cart_item' pk=item.id %}" class="btn btn-primary btn-sm">Update</a>
             <!-- Add delete button -->
-            <a href="{% url 'shopping_cart:remove_from_cart' pk=item.pk %}" class="btn btn-danger btn-sm">Delete</a>
+            <a href="{% url 'shopping_cart:remove_from_cart' pk=item.id %}" class="btn btn-danger btn-sm">Delete</a>
           </td>
         </tr>
       {% endfor %}
     </tbody>
   </table>
+  <p>Subtotal: ${{ subtotal|floatformat:2 }}</p>
   <p>Sales Tax: ${{ sales_tax|floatformat:2 }}</p>
-  <p>Total: ${{ total_price|floatformat:2 }}</p>
+  <p>Total: ${{ total|floatformat:2 }}</p>
   <!-- Add checkout button -->
-  {% comment %} <a href="{% url 'shopping_cart:checkout' %}" class="btn btn-success">Checkout</a> {% endcomment %}
+  <a href="{% url 'shopping_cart:checkout' %}" class="btn btn-success">Checkout</a>
 {% endblock %}

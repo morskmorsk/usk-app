@@ -8,6 +8,8 @@ from .views import (
     AddToCartView,
     RemoveFromCartView,
     UpdateCartItemView,
+    CheckoutView,
+    CheckoutSuccessView,
 )
 
 app_name = 'shopping_cart'
@@ -28,4 +30,7 @@ urlpatterns = [
           name='remove_from_cart'),
      path('update_cart_item/<int:pk>/', UpdateCartItemView.as_view(),
           name='update_cart_item'),
+     path('checkout/', CheckoutView.as_view(), name='checkout'),
+     path('checkout_success/', CheckoutSuccessView.as_view(),
+          name='checkout_success'),
 ]
