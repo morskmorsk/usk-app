@@ -1,14 +1,17 @@
 from django.contrib.auth import login
-from .forms import CustomUserCreationForm
-from django.views.generic import CreateView
+from .forms import SignupForm
+from django.shortcuts import render, redirect
 
 
-class SignupView(CreateView):
-    form_class = CustomUserCreationForm
-    template_name = 'account/signup.html'
-    success_url = 'shopping_cart/product_list'
-
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        login(self.request, self.object)
-        return response
+def signup(request):
+    if request.method == 'POST':
+        form = SignupForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            # Change 'home' to the name of the view you want to
+            # redirect to after successful registration
+            return redirect('shopping_cart:product_list')
+    else:
+        form = SignupForm()
+    return render(request, 'signup.html', {'form': form})
