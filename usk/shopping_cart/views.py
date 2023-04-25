@@ -10,26 +10,27 @@ from django.shortcuts import render
 from django.http import Http404
 from .forms import UpdateCartItemForm
 from django.views.generic.edit import UpdateView
+from django.views import View
 
 
-class ProductListView(ListView):
+class ProductListView(LoginRequiredMixin, ListView):
     model = Product
     template_name = 'shopping_cart/product_list.html'
     context_object_name = 'products'
 
 
-class ProductDetailView(DetailView):
+class ProductDetailView(LoginRequiredMixin, DetailView):
     model = Product
     template_name = 'shopping_cart/product_detail.html'
 
 
-class AddProductView(CreateView):
+class AddProductView(LoginRequiredMixin, CreateView):
     model = Product
     form_class = ProductForm
     success_url = reverse_lazy('shopping_cart:product_list')
 
 
-class UpdateProductView(UpdateView):
+class UpdateProductView(LoginRequiredMixin, UpdateView):
     model = Product
     fields = ['name', 'price']
     success_url = reverse_lazy('shopping_cart:product_list')
@@ -57,7 +58,7 @@ class ShoppingCartView(LoginRequiredMixin, TemplateView):
         return context
 
 
-class AddToCartView(LoginRequiredMixin, TemplateView):
+class AddToCartView(LoginRequiredMixin, View):
 
     def post(self, request, *args, **kwargs):
         price = request.POST.get('price', 0)
@@ -110,7 +111,7 @@ class UpdateCartItemView(LoginRequiredMixin, UpdateView):
         return ShoppingCartItem.objects.filter(cart__user=self.request.user)
 
 
-class CheckoutView(TemplateView):
+class CheckoutView(LoginRequiredMixin, TemplateView):
     template_name = 'shopping_cart/checkout.html'
 
     def get_context_data(self, **kwargs):
@@ -143,5 +144,11 @@ class CheckoutView(TemplateView):
         return redirect('shopping_cart:checkout_success')
 
 
-class CheckoutSuccessView(TemplateView):
+class CheckoutSuccessView(LoginRequiredMixin, TemplateView):
     template_name = 'shopping_cart/checkout_success.html'
+
+# logout the user when the checkout is successful
+    def get(self, request, *args, **kwargs):
+        from django.contrib.auth import logout
+        logout(request)
+        return super().get(request, *args, **kwargs)
