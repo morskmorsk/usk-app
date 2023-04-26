@@ -8,6 +8,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import update_session_auth_hash
 from django.views import View
 from django.contrib import messages
+from .forms import ProfileForm
 
 
 def signup(request):
@@ -29,11 +30,11 @@ def profile(request):
 
 class ProfileEditView(LoginRequiredMixin, View):
     def get(self, request):
-        form = UserChangeForm(instance=request.user)
+        form = ProfileForm(instance=request.user)
         return render(request, 'account/profile_edit.html', {'form': form})
 
     def post(self, request):
-        form = UserChangeForm(request.POST, instance=request.user)
+        form = ProfileForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
             messages.success(request, 'Your profile has been updated.')
