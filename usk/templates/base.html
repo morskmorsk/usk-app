@@ -2,7 +2,7 @@
 <html lang="en">
   {% load static %}
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8"/>
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
@@ -19,10 +19,58 @@
       crossorigin="anonymous"
     ></script>
     <title>{% block title %}Cellphone Doctor{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" />
   </head>
   <body>
     <header>
+      <nav class="navbar navbar-expand-lg navbar-light">
+        <a class="navbar-brand nvb" href="{% url 'shopping_cart:product_list' %}">Cellphone Doctor</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end"id="navbarNav">
+          <ul class="navbar-nav">
+            {% if user.is_authenticated %}
+            <li class="nav-item dropdown">
+              <a class="btn btn-outline-light dropdown-toggle" href="#" id="storeDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Work Order</a>
+              <div class="dropdown-menu" aria-labelledby="storeDropdown">
+                <a class="dropdown-item" href="{% url 'shopping_cart:product_list' %}">Product List</a>
+                <a class="dropdown-item" href="{% url 'shopping_cart:add_product' %}">Create Product</a>
+              </div>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="btn btn-outline-light dropdown-toggle" href="#" id="storeDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Store</a>
+              <div class="dropdown-menu" aria-labelledby="storeDropdown">
+                <a class="dropdown-item" href="{% url 'shopping_cart:product_list' %}">Product List</a>
+                <a class="dropdown-item" href="{% url 'shopping_cart:add_product' %}">Create Product</a>
+              </div>
+            </li>
+            <li class="nav-item">
+              <a class="btn btn-outline-light" href="{% url 'shopping_cart:shopping_cart' %}">Cart</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="btn btn-outline-light dropdown-toggle" href="#" id="storeDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Profile</a>
+              <div class="dropdown-menu" aria-labelledby="storeDropdown">
+                <a class="dropdown-item" href="{% url 'profile' %}">View</a>
+                <a class="dropdown-item" href="{% url 'profile_edit' %}">Edit Profile</a>
+                <a class="dropdown-item" href="{% url 'change_password' %}">Change Password</a>   
+                <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+              </div>
+            </li>
+            {% else %}
+            <li class="nav-item">
+              <a class="btn btn-outline-light" href="{% url 'login' %}">Login</a>
+            </li>
+            <li class="nav-item">
+              <a class="btn btn-outline-light" href="{% url 'signup' %}">Register</a>
+            </li>
+
+            {% endif %}
+          </ul>
+        </div>
+      </nav>
+    </header>
+    {% comment %} <header>
       <nav class="navbar navbar-expand-lg navbar-light">
         <a class="navbar-brand" href="{% url 'shopping_cart:product_list' %}">
           <div class="nvb">Cellphone Doctor</div></a>
@@ -54,7 +102,7 @@
           </ul>
         </div>
       </nav>
-    </header>
+    </header> {% endcomment %}
     <br />
     <main role="main" class="container">
       {% block content %} {% endblock %}
