@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Devices</h1>
+<ul>
+{% for device in devices %}
+    <li>{{ device.device_model }}</li>
+{% endfor %}
+</ul>
+{% endblock %}

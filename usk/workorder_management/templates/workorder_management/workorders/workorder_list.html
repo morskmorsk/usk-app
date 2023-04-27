@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Work Orders</h1>
+<ul>
+{% for workorder in workorders %}
+    <li>{{ workorder.user.username }}</li>
+{% endfor %}
+</ul>
+{% endblock %}
