@@ -79,11 +79,6 @@ class RemoveFromCartView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('shopping_cart:shopping_cart')
 
     def get_object(self, queryset=None):
-        # product = Product.objects.filter(pk=self.kwargs['pk']).first()
-
-        # if not product:
-        #     return None
-
         cart = get_object_or_404(ShoppingCart, user=self.request.user)
         cart_item = ShoppingCartItem.objects.filter(
             cart=cart, pk=self.kwargs['pk']).first()

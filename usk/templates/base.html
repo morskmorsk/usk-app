@@ -34,8 +34,9 @@
             <li class="nav-item dropdown">
               <a class="btn btn-outline-light dropdown-toggle" href="#" id="storeDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Work Order</a>
               <div class="dropdown-menu" aria-labelledby="storeDropdown">
-                <a class="dropdown-item" href="{% url 'shopping_cart:product_list' %}">Product List</a>
-                <a class="dropdown-item" href="{% url 'shopping_cart:add_product' %}">Create Product</a>
+                <a class="dropdown-item" href="{% url 'workorder_management:device_create' %}">Create Device</a>
+                <a class="dropdown-item" href="{% url 'workorder_management:device_list' %}">Device List</a>
+                <a class="dropdown-item" href="{% url 'workorder_management:workorder_list' %}">Work Order List</a>
               </div>
             </li>
             <li class="nav-item dropdown">
@@ -64,45 +65,11 @@
             <li class="nav-item">
               <a class="btn btn-outline-light" href="{% url 'signup' %}">Register</a>
             </li>
-
             {% endif %}
           </ul>
         </div>
       </nav>
     </header>
-    {% comment %} <header>
-      <nav class="navbar navbar-expand-lg navbar-light">
-        <a class="navbar-brand" href="{% url 'shopping_cart:product_list' %}">
-          <div class="nvb">Cellphone Doctor</div></a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-toggle="collapse"
-          data-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-          <ul class="navbar-nav">
-            {% if user.is_authenticated %}
-            <li class="nav-item">
-              <a class="btn btn-outline-light" href="{% url 'logout' %}">Logout</a>
-            </li>
-            {% else %}
-            <li class="nav-item">
-              <a class="btn btn-outline-light" href="{% url 'login' %}">Login</a>
-            </li>
-            <li class="nav-item">
-              <a class="btn btn-outline-light" href="{% url 'signup' %}">Register</a>
-            </li>
-            {% endif %}
-          </ul>
-        </div>
-      </nav>
-    </header> {% endcomment %}
     <br />
     <main role="main" class="container">
       {% block content %} {% endblock %}
