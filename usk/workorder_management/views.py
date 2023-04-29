@@ -19,7 +19,7 @@ from .forms import UpdateWorkOrderItemForm
 
 class DeviceListView(LoginRequiredMixin, ListView):
     model = Device
-    template_name = 'device_list.html'
+    template_name = 'workorder_management/device_list.html'
     context_object_name = 'devices'
 
     def get_queryset(self):
@@ -28,7 +28,7 @@ class DeviceListView(LoginRequiredMixin, ListView):
 
 class DeviceDetailView(LoginRequiredMixin, DetailView):
     model = Device
-    template_name = 'devices/device_detail.html'
+    template_name = 'workorder_management/device_detail.html'
 
 
 class DeviceCreateView(LoginRequiredMixin, CreateView):
@@ -36,7 +36,7 @@ class DeviceCreateView(LoginRequiredMixin, CreateView):
     fields = ['owner', 'device_model', 'imei', 'description', 'defect',
               'estimated_repair_price', 'cost_of_repair', 'part_cost',
               'location', 'image', 'is_repaired', 'is_repairable']
-    template_name = 'device_create.html'
+    template_name = 'workorder_management/device_create.html'
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
@@ -48,7 +48,7 @@ class DeviceUpdateView(LoginRequiredMixin, UpdateView):
     fields = ['owner', 'device_model', 'imei', 'description', 'defect',
               'estimated_repair_price', 'cost_of_repair', 'part_cost',
               'location', 'image', 'is_repaired', 'is_repairable']
-    template_name = 'device_update.html'
+    template_name = 'workorder_management/device_update.html'
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
@@ -57,7 +57,7 @@ class DeviceUpdateView(LoginRequiredMixin, UpdateView):
 
 class WorkOrderListView(LoginRequiredMixin, ListView):
     model = WorkOrder
-    template_name = 'workorder_list.html'
+    template_name = 'workorder_management/workorder_list.html'
     context_object_name = 'workorders'
 
     def get_queryset(self):
@@ -96,7 +96,7 @@ class RemoveFromWorkOrderView(LoginRequiredMixin, DeleteView):
 
     def render_to_response(self, context, **response_kwargs):
         if not context.get('object'):
-            return render(self.request, 'device_not_found.html',
+            return render(self.request, 'workorder_management/device_not_found.html',
                           status=404)
 
         return super().render_to_response(context, **response_kwargs)
@@ -105,7 +105,7 @@ class RemoveFromWorkOrderView(LoginRequiredMixin, DeleteView):
 class UpdateWorkOrderItemView(LoginRequiredMixin, UpdateView):
     model = WorkOrderItem
     form_class = UpdateWorkOrderItemForm
-    template_name = 'update_workorder_item.html'
+    template_name = 'workorder_management/update_workorder_item.html'
     success_url = reverse_lazy('workorder_management:workorder_list')
 
     def get_queryset(self):
@@ -113,7 +113,7 @@ class UpdateWorkOrderItemView(LoginRequiredMixin, UpdateView):
 
 
 class CheckoutView(LoginRequiredMixin, TemplateView):
-    template_name = 'checkout.html'
+    template_name = 'workorder_management/checkout.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -145,7 +145,7 @@ class CheckoutView(LoginRequiredMixin, TemplateView):
 
 
 class CheckoutSuccessView(LoginRequiredMixin, TemplateView):
-    template_name = 'checkout_success.html'
+    template_name = 'workorder_management/checkout_success.html'
 
 # logout the user when the checkout is successful
     def get(self, request, *args, **kwargs):
