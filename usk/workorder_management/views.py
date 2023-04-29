@@ -68,11 +68,11 @@ class WorkOrderListView(LoginRequiredMixin, ListView):
 class AddToWorkOrderView(LoginRequiredMixin, View):
 
     def post(self, request, *args, **kwargs):
-        price = request.POST.get('price', 0)
+        repair_price = request.POST.get('repair_price', 0)
         device = get_object_or_404(Device, pk=self.kwargs['pk'])
         workorder, _ = WorkOrder.objects.get_or_create(user=request.user)
         item, created = WorkOrderItem.objects.get_or_create(
-            workorder=workorder, device=device, price=price)
+            workorder=workorder, device=device, repair_price=repair_price)
 
         if not created:
             item.quantity += 1
