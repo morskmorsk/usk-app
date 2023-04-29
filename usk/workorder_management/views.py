@@ -33,10 +33,10 @@ class DeviceDetailView(LoginRequiredMixin, DetailView):
 
 class DeviceCreateView(LoginRequiredMixin, CreateView):
     model = Device
-    fields = ['owner', 'device_model', 'imei', 'description', 'defect',
-              'estimated_repair_price', 'cost_of_repair', 'part_cost',
-              'location', 'image', 'is_repaired', 'is_repairable']
+    fields = ['device_model', 'imei', 'description', 'defect',
+              'estimated_repair_price']
     template_name = 'workorder_management/device_create.html'
+    success_url = reverse_lazy('workorder_management:workorder_list')
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
@@ -49,6 +49,7 @@ class DeviceUpdateView(LoginRequiredMixin, UpdateView):
               'estimated_repair_price', 'cost_of_repair', 'part_cost',
               'location', 'image', 'is_repaired', 'is_repairable']
     template_name = 'workorder_management/device_update.html'
+    success_url = reverse_lazy('workorder_management:workorder_list')
 
     def form_valid(self, form):
         form.instance.owner = self.request.user

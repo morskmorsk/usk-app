@@ -1,4 +1,15 @@
 {% extends 'base.html' %}
 
 {% block content %}
+    <h2>{{ device.device_model }} ({{ device.imei }})</h2>
+    <p><strong>Description:</strong> {{ device.description }}</p>
+    <p><strong>Defect:</strong> {{ device.defect }}</p>
+    <p><strong>Estimated Repair Price:</strong> {{ device.estimated_repair_price }}</p>
+    <p><strong>Owner:</strong> {{ device.owner }}</p>
+  <form action="{% url 'workorder_management:add_to_workorder' pk=device.id %}" method="post">
+    {% csrf_token %}
+    <input type="text" name="repair_price" value="{{ device.estimated_repair_price }}">
+    <button type="submit" class="btn btn-primary">Add to Work Order</button>
+  </form>
+
 {% endblock %}
