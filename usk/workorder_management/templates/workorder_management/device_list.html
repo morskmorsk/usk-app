@@ -22,7 +22,7 @@
                         <td>{{ device.description }}</td>
                         <td>{{ device.defect }}</td>
                         <td>{{ device.estimated_repair_price }}</td>
-                        <td><a href="{% url 'workorder_management:device_detail' pk=device.id %}" class="btn btn-primary btn-sm">View</a></td>
+                        <td><a href="{% url 'workorder_management:device_detail' pk=device.id %}" class="btn btn-primary btn-sm">View Details</a></td>
                         <td><a href="{% url 'workorder_management:device_update' pk=device.id %}" class="btn btn-primary btn-sm">Update</a></td>
                         <td><a href="{% url 'workorder_management:add_to_workorder' pk=device.id %}"class="btn btn-primary btn-sm">Add to Work Order</a></td>
 

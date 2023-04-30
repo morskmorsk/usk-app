@@ -61,11 +61,11 @@ class ShoppingCartView(LoginRequiredMixin, TemplateView):
 class AddToCartView(LoginRequiredMixin, View):
 
     def post(self, request, *args, **kwargs):
-        repair_price = request.POST.get('repair_price', 0)
+        price = request.POST.get('price', 0)
         product = get_object_or_404(Product, pk=self.kwargs['pk'])
         cart, _ = ShoppingCart.objects.get_or_create(user=request.user)
         item, created = ShoppingCartItem.objects.get_or_create(
-            cart=cart, product=product, repair_price=repair_price)
+            cart=cart, product=product, price=price)
 
         if not created:
             item.quantity += 1

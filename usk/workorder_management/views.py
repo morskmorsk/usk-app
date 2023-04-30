@@ -13,7 +13,7 @@ from django.views.generic import (ListView,
                                   )
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import Device, WorkOrder, WorkOrderItem, WorkOrderOrder
+from .models import Device, WorkOrder, OrderItem, Order
 from .forms import UpdateWorkOrderItemForm
 
 
@@ -56,13 +56,21 @@ class DeviceUpdateView(LoginRequiredMixin, UpdateView):
         return super().form_valid(form)
 
 
-class WorkOrderListView(LoginRequiredMixin, ListView):
-    model = WorkOrder
+class WorkOrderView(LoginRequiredMixin, TemplateView):
     template_name = 'workorder_management/workorder_list.html'
-    context_object_name = 'workorders'
 
-    def get_queryset(self):
-        return WorkOrder.objects.filter(user=self.request.user)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # workorder = get_object_or_404(WorkOrder, user=self.request.user)
+        workorder = get_object_or_404(WorkOrder, user=self.request.user)
+        items = OrderItem.objects.filter(workorder_id=workorder)
+        context.update({'items': items})
+        return context
+
+
+class WorkOrderDetailView(LoginRequiredMixin, DetailView):
+    model = WorkOrder
+    template_name = 'workorder_management/workorder_detail.html'
 
 
 class AddToWorkOrderView(LoginRequiredMixin, View):
@@ -71,23 +79,19 @@ class AddToWorkOrderView(LoginRequiredMixin, View):
         repair_price = request.POST.get('repair_price', 0)
         device = get_object_or_404(Device, pk=self.kwargs['pk'])
         workorder, _ = WorkOrder.objects.get_or_create(user=request.user)
-        item, created = WorkOrderItem.objects.get_or_create(
+        item, created = OrderItem.objects.get_or_create(
             workorder=workorder, device=device, repair_price=repair_price)
-
-        if not created:
-            item.quantity += 1
-            item.save()
-
+        item.save()
         return redirect('workorder_management:workorder_list')
 
 
 class RemoveFromWorkOrderView(LoginRequiredMixin, DeleteView):
-    model = WorkOrderItem
+    model = OrderItem
     success_url = reverse_lazy('workorder_management:workorder_list')
 
     def get_object(self, queryset=None):
         workorder = get_object_or_404(WorkOrder, user=self.request.user)
-        workorderitem = WorkOrderItem.objects.filter(
+        workorderitem = OrderItem.objects.filter(
             workorder=workorder, pk=self.kwargs['pk']).first()
 
         if not workorderitem:
@@ -104,13 +108,13 @@ class RemoveFromWorkOrderView(LoginRequiredMixin, DeleteView):
 
 
 class UpdateWorkOrderItemView(LoginRequiredMixin, UpdateView):
-    model = WorkOrderItem
+    model = OrderItem
     form_class = UpdateWorkOrderItemForm
     template_name = 'workorder_management/update_workorder_item.html'
     success_url = reverse_lazy('workorder_management:workorder_list')
 
     def get_queryset(self):
-        return WorkOrderItem.objects.filter(cart__user=self.request.user)
+        return OrderItem.objects.filter(workorder__user=self.request.user)
 
 
 class CheckoutView(LoginRequiredMixin, TemplateView):
@@ -122,17 +126,17 @@ class CheckoutView(LoginRequiredMixin, TemplateView):
         return context
 
     def post(self, request, *args, **kwargs):
-        workorder = get_object_or_404(WorkOrderOrder, user=request.user)
-        workorder_items = WorkOrderItem.objects.filter(workorder=workorder)
+        workorder = get_object_or_404(Order, user=request.user)
+        workorder_items = OrderItem.objects.filter(workorder=workorder)
 
         # Create Order
-        workorderorder = WorkOrderOrder(user=request.user)
-        workorderorder.save()
+        Order = Order(user=request.user)
+        Order.save()
 
         # Create OrderItems
         for item in workorder_items:
-            work_order_item = WorkOrderItem(
-                workorderorder=workorderorder,
+            work_order_item = OrderItem(
+                Order=Order,
                 device=item.device,
                 repair_price=item.repair_price,
             )
