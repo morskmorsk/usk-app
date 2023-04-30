@@ -41,7 +41,8 @@ class ShoppingCartView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        cart = get_object_or_404(ShoppingCart, user=self.request.user)
+        # cart = get_object_or_404(ShoppingCart, user=self.request.user)
+        cart = ShoppingCart.objects.get_or_create(user=self.request.user)[0]
         items = ShoppingCartItem.objects.filter(cart=cart)
 
         # Calculate the subtotal
