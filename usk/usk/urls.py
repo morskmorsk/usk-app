@@ -28,4 +28,7 @@ urlpatterns = [
     path('account/', include('account.urls')),
     path('', include('shopping_cart.urls')),
     path('workorders/', include('workorder_management.urls')),
+
+    path('api/v1/', include('account.urls')),
+    
 ]
